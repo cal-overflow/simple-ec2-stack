@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  # Create a security group that allows incoming SSH (port 22) traffic.
+  # This can then be attached to our virtual machine (EC2 instance).
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Enable SSH access via port 22'
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+
+
+  # Generate a SSH Key that can be used for connecting to the EC2 instance.
+  # This will be stored in AWS Systems Manager.
+  SSHKey:
+    Type: AWS::EC2::KeyPair
+    Properties: 
+      KeyName: !Ref '${AWS::StackName}-vm-ssh-key'
+
+
+  VirtualMachine:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref SSHKey
+      # View all available instance types: https://aws.amazon.com/ec2/instance-types/
+      InstanceType: 't3.micro' # 2 vCPU & 1GB Memory
+      ImageId: 'ami-0b93ce03dcbcb10f6' # Id corresponding to Ubuntu 20.04 in us-east-1 region
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+

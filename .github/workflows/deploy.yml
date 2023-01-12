@@ -1,0 +1,38 @@
+name: Deploy stack in two regions
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Run the `deploy` job for each value of AWS_REGION
+    strategy:
+      matrix:
+        AWS_REGION:
+          - 'us-east-1'
+          - 'us-west-1'
+    steps:
+      # Clone the repository onto the GitHub actions runner (needed so the action can see our files)
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      # Authenticate with AWS using the IAM Role stored in the Github repository's secrets.
+      # Note: Secret values can be configured in the settings tab on a GitHub repository.
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+          aws-region: ${{ matrix.AWS_REGION }}
+
+      - name: Deploy stack in ${{ matrix.AWS_REGION }} region
+        run: |
+          sam deploy --region ${{ matrix.AWS_REGION }}
+

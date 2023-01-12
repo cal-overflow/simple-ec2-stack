@@ -1,0 +1,13 @@
+# Learn more about the purpose of this file:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+version = 0.1
+
+[default.global.parameters]
+stack_name = "basic-ec2-stack"
+region = "us-east-1"
+
+[default.deploy.parameters]
+confirm_changeset = false
+fail_on_empty_changeset = false
+capabilities = []
+
