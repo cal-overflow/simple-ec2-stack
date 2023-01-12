@@ -19,7 +19,7 @@ Resources:
   SSHKey:
     Type: AWS::EC2::KeyPair
     Properties: 
-      KeyName: !Ref '${AWS::StackName}-vm-ssh-key'
+      KeyName: !Sub '${AWS::StackName}-vm-ssh-key'
 
 
   VirtualMachine:
